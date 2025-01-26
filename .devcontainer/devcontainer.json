@@ -1,0 +1,29 @@
+{
+    "name": "Django Wallet API",
+    "dockerComposeFile": "../docker-compose.yml",
+    "service": "web",
+    "workspaceFolder": "/app",
+    "customizations": {
+        "vscode": {
+            "settings": {
+                "python.pythonPath": "/usr/local/bin/python",
+                "python.linting.enabled": true,
+                "python.linting.flake8Enabled": true,
+                "python.formatting.provider": "black",
+                "editor.formatOnSave": true,
+                "python.sortImports.args": [
+                    "--profile",
+                    "black"
+                ],
+                "python.linting.flake8Args": [
+                    "--max-line-length=88"
+                ]
+            },
+            "extensions": [
+                "ms-python.python",
+                "ms-python.vscode-pylance",
+                "ms-azuretools.vscode-docker"
+            ]
+        }
+    }
+}

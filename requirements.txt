@@ -1,0 +1,12 @@
+django
+djangorestframework
+djangorestframework-simplejwt
+psycopg2-binary
+python-dotenv
+dj-database-url
+pytest
+pytest-django
+Faker
+flake8    
+black     
+isort     
