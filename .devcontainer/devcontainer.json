@@ -6,7 +6,15 @@
     "customizations": {
         "vscode": {
             "settings": {
+                "python.defaultInterpreterPath": "/usr/local/bin/python",
                 "python.pythonPath": "/usr/local/bin/python",
+                "python.analysis.extraPaths": [
+                    "/app",
+                    "/app/wallet_api"
+                ],
+                "python.analysis.diagnosticSeverityOverrides": {
+                    "reportMissingModuleSource": "none" // Ignora warnings de imports falsos
+                },
                 "python.linting.enabled": true,
                 "python.linting.flake8Enabled": true,
                 "python.formatting.provider": "black",
@@ -17,13 +25,25 @@
                 ],
                 "python.linting.flake8Args": [
                     "--max-line-length=88"
-                ]
+                ],
+                "[python]": {
+                    "editor.defaultFormatter": "ms-python.black-formatter"
+                }
             },
             "extensions": [
                 "ms-python.python",
                 "ms-python.vscode-pylance",
-                "ms-azuretools.vscode-docker"
+                "ms-azuretools.vscode-docker",
+                "ms-python.black-formatter"
             ]
         }
+    },
+    "postCreateCommand": "pip install -r requirements.txt && python manage.py migrate",
+    "forwardPorts": [
+        8000
+    ],
+    "remoteEnv": {
+        "DJANGO_SETTINGS_MODULE": "wallet_api.settings",
+        "PYTHONPATH": "/app"
     }
 }
