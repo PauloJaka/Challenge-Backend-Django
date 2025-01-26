@@ -1,16 +1,17 @@
 services:
   web:
-    build: .  
+    build: .
     command: sh -c "python manage.py migrate && python manage.py runserver 0.0.0.0:8000"
     ports:
-      - "8000:8000"  
+      - "8000:8000"
     depends_on:
-      - db  
+      - db
     environment:
       - DATABASE_URL=postgres://postgres:postgres@db:5432/postgres
-
+    volumes:
+      - .:/app
   db:
-    image: postgres:13  
+    image: postgres:13
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
