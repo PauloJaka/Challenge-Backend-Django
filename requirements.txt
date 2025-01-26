@@ -1,6 +1,7 @@
 django
 djangorestframework
 djangorestframework-simplejwt
+dj-rest-auth
 psycopg2-binary
 python-dotenv
 dj-database-url
