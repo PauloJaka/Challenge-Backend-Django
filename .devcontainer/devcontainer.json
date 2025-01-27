@@ -10,7 +10,7 @@
                 "python.pythonPath": "/usr/local/bin/python",
                 "python.analysis.extraPaths": [
                     "/app",
-                    "/app/wallet_api"
+                    "/app/API"
                 ],
                 "python.analysis.diagnosticSeverityOverrides": {
                     "reportMissingModuleSource": "none" // Ignora warnings de imports falsos
