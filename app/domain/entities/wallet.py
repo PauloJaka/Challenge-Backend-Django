@@ -19,7 +19,7 @@ class Wallet:
         )
 
     def add_balance(self, amount: float, transaction_date: timezone.datetime = None):
-        if self._balance + amount <= 0:
+        if self._balance + amount < 0:
             raise ValueError("Saldo não pode ser negativo")
 
         self._balance += amount

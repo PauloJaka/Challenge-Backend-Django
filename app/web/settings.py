@@ -40,7 +40,10 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "rest_framework",
     "rest_framework_simplejwt",
+    'infrastructure',
 ]
+
+AUTH_USER_MODEL='infrastructure.CustomUser'
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
@@ -52,7 +55,7 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
 
-ROOT_URLCONF = "api.urls"
+ROOT_URLCONF = "web.urls"
 
 TEMPLATES = [
     {
@@ -70,7 +73,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = "api.wsgi.application"
+WSGI_APPLICATION = "web.wsgi.application"
 
 
 # Database

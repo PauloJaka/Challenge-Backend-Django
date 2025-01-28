@@ -10,3 +10,5 @@ Faker
 flake8    
 black     
 isort     
+bcrypt
+pyjwt

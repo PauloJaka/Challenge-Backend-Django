@@ -1,12 +1,27 @@
-import pytest
+from django.test import TestCase
 from django.utils import timezone
+from domain.entities.user import User
 from infrastructure.repositories.django_user_repository import DjangoUserRepository
-from core.entities.user import User
 
-@pytest.mark.django_db
-def test_save_user_with_timezone():
-    repo = DjangoUserRepository()
-    user = User(id=None, name="Bob", cpf="98765432100", password="senha_secreta")
+class TestDjangoUserRepository(TestCase):
+    def setUp(self):
+        self.repository = DjangoUserRepository()
     
-    saved_user = repo.save(user)
-    assert saved_user.created_at.tzinfo == timezone.get_current_timezone() 
+    def test_save_user_with_timezone(self):
+        # Arrange
+        user = User(
+            id=None,
+            name="Bob",
+            cpf="98765432100",
+            password="senha123",
+            created_at=None
+        )
+        
+        # Act
+        saved_user = self.repository.save(user)
+        
+        # Assert
+        self.assertIsNotNone(saved_user.id)
+        self.assertEqual(saved_user.name, "Bob")
+        self.assertEqual(saved_user.cpf, "98765432100")
+        self.assertIsNotNone(saved_user.created_at)

@@ -10,7 +10,7 @@
                 "python.pythonPath": "/usr/local/bin/python",
                 "python.analysis.extraPaths": [
                     "/app",
-                    "/app/API"
+                    "/app/web"
                 ],
                 "python.analysis.diagnosticSeverityOverrides": {
                     "reportMissingModuleSource": "none" // Ignora warnings de imports falsos
@@ -43,7 +43,7 @@
         8000
     ],
     "remoteEnv": {
-        "DJANGO_SETTINGS_MODULE": "wallet_api.settings",
+        "DJANGO_SETTINGS_MODULE": "web.settings",
         "PYTHONPATH": "/app"
     }
 }
