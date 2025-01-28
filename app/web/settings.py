@@ -40,10 +40,10 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "rest_framework",
     "rest_framework_simplejwt",
-    'infrastructure',
+    "infrastructure",
 ]
 
-AUTH_USER_MODEL='infrastructure.CustomUser'
+AUTH_USER_MODEL = "infrastructure.CustomUser"
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
