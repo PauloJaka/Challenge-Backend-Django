@@ -1,4 +1,5 @@
 from django.utils import timezone
+from decimal import Decimal
 
 class Wallet:
     def __init__(
@@ -28,7 +29,6 @@ class Wallet:
         self._balance = value
 
     def add_balance(self, amount: float, transaction_date: timezone.datetime = None):
+        amount = Decimal(amount)
         self.balance = self._balance + amount
-        self.last_transaction_date = (
-            transaction_date if transaction_date else timezone.now()
-        )
+        self.last_transaction_date = transaction_date if transaction_date else timezone.now()
