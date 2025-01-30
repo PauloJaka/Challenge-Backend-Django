@@ -1,4 +1,3 @@
-# tests/application/test_transfer_funds.py
 from unittest.mock import Mock
 import pytest
 from application.use_cases.transfer_funds import TransferFundsUseCase
