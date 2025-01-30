@@ -53,6 +53,5 @@ class AuthenticationUseCase:
 
     @staticmethod
     def hash_password(password: str) -> str:
-        """Método utilitário para gerar hash de senha"""
         salt = bcrypt.gensalt()
         return bcrypt.hashpw(password.encode("utf-8"), salt).decode("utf-8")
