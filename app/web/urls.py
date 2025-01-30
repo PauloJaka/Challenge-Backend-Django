@@ -18,9 +18,13 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
+from webapps.views import ListTransfersView, CreateUserView, AddBalanceToWalletView  # Adicione o AddBalanceToWalletView aqui
 
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("api/token/", TokenObtainPairView.as_view(), name="token_obtain_pair"),
+    path("api/users/", CreateUserView.as_view(), name="create_user"),  
     path("api/token/refresh/", TokenRefreshView.as_view(), name="token_refresh"),
+    path("transfers/", ListTransfersView.as_view(), name="list_transfers"),
+    path("wallet/<str:cpf>/add_balance/", AddBalanceToWalletView.as_view(), name='add_balance_to_wallet'),  # Adicionando a URL para o endpoint de adicionar saldo
 ]
