@@ -15,41 +15,60 @@ from django.http import JsonResponse
 from domain.exceptions.wallet_not_found_execption import WalletNotFoundException
 from rest_framework.exceptions import NotFound
 from infrastructure.models import CustomUser
+from domain.entities.user import User as DomainUser
 import logging
 
 logger = logging.getLogger(__name__)
 
 class CreateUserView(APIView):
     def post(self, request):
+        data = request.data
+        user_repository = DjangoUserRepository()
+
+        validation_error = self.validate_user_data(data, user_repository)
+
+        if validation_error:
+            return Response({'error': validation_error}, status=status.HTTP_400_BAD_REQUEST)
+
         try:
-            user_repository = DjangoUserRepository()
-            wallet_repository = DjangoWalletRepository() 
-            use_case = CreateUserUseCase(user_repository, wallet_repository)  
+            wallet_repository = DjangoWalletRepository()
+            use_case = CreateUserUseCase(user_repository, wallet_repository)
 
             user = use_case.execute(
-                name=request.data.get('name'),
-                cpf=request.data.get('cpf'),
-                password=request.data.get('password')
+                name=data['name'],
+                cpf=data['cpf'],
+                password=data['password']
             )
 
-            return Response({
-                'id': user.id,
-                'name': user.name,
-                'cpf': user.cpf,
-                'created_at': user.created_at
-            }, status=status.HTTP_201_CREATED)
+            return Response(self.serialize_user(user), status=status.HTTP_201_CREATED)
 
         except ValueError as e:
-            return Response(
-                {'error': str(e)}, 
-                status=status.HTTP_400_BAD_REQUEST
-            )
+            return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
         except Exception as e:
-            logger.error(f"Erro ao criar usuário: {str(e)}", exc_info=True)
-            return Response(
-                {'error': 'Erro ao criar usuário'},
-                status=status.HTTP_500_INTERNAL_SERVER_ERROR
-            )
+            return Response({'error': f'Erro ao criar usuário: {str(e)}'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+    @staticmethod
+    def validate_user_data(data, user_repository):
+        required_fields = ['name', 'cpf', 'password']
+        missing_fields = [field for field in required_fields if not data.get(field)]
+
+        if missing_fields:
+            return f"Erro ao criar: falta {', '.join(missing_fields)}"
+
+        if user_repository.get_by_cpf(data['cpf']):  
+            return "Erro ao criar: já existe um usuário com esse CPF"
+
+        return None
+
+    @staticmethod
+    def serialize_user(user: DomainUser):
+        return {
+            'id': user.id,
+            'name': user.name,
+            'cpf': user.cpf,
+            'created_at': user.created_at.isoformat() if user.created_at else None
+        }
         
 class TransferFundsView(APIView):
     permission_classes = [IsAuthenticated]
