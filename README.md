@@ -14,7 +14,7 @@ Este projeto é uma API de carteira digital desenvolvida em Django, seguindo os 
 ## Instalação e Execução
 1. **Construir e subir os containers:**
    ```sh
-   docker-compose up --build
+   docker compose up --build
    ```
 
 2. **Entrar no container do backend:**
