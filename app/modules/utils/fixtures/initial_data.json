@@ -5,8 +5,8 @@
     "fields": {
       "name": "João Silva",
       "cpf": "12345678901",
-      "password": "MeContrataPfv",
-      "is_active": true,  
+      "password": "senha123",
+      "is_active": true,
       "created_at": "2024-01-01T10:00:00Z"
     }
   },
