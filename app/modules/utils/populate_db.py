@@ -11,7 +11,10 @@ CREATE_USER_URL = f"{BASE_URL}/api/users/"
 TOKEN_OBTAIN_URL = f"{BASE_URL}/api/token/"
 ADD_BALANCE_URL = f"{BASE_URL}/wallet/<str:cpf>/add_balance/"
 TRANSFER_FUNDS_URL = f"{BASE_URL}/wallet/transfer/"
-UPDATE_TRANSFER_URL = f"{BASE_URL}/wallet/transfer/<int:pk>/"  # Endpoint para atualizar transferências
+UPDATE_TRANSFER_URL = (
+    f"{BASE_URL}/wallet/transfer/<int:pk>/"  # Endpoint para atualizar transferências
+)
+
 
 # Função para obter token JWT
 def get_jwt_token(cpf, password):
@@ -23,8 +26,11 @@ def get_jwt_token(cpf, password):
     if response.status_code == 200:
         return response.json()["access"]
     else:
-        print(f"Erro ao obter token para o usuário {cpf}: {response.status_code} - {response.text}")
+        print(
+            f"Erro ao obter token para o usuário {cpf}: {response.status_code} - {response.text}"
+        )
         return None
+
 
 # Função para criar usuários
 def create_user(user_data):
@@ -37,7 +43,10 @@ def create_user(user_data):
     if response.status_code == 201:
         print(f"Usuário criado: {user_data['cpf']}")
     else:
-        print(f"Erro ao criar usuário {user_data['cpf']}: {response.status_code} - {response.text}")
+        print(
+            f"Erro ao criar usuário {user_data['cpf']}: {response.status_code} - {response.text}"
+        )
+
 
 # Função para adicionar saldo à carteira
 def add_balance_to_wallet(wallet_data):
@@ -57,7 +66,10 @@ def add_balance_to_wallet(wallet_data):
     if response.status_code == 200:
         print(f"Saldo adicionado para o usuário {cpf}")
     else:
-        print(f"Erro ao adicionar saldo para o usuário {cpf}: {response.status_code} - {response.text}")
+        print(
+            f"Erro ao adicionar saldo para o usuário {cpf}: {response.status_code} - {response.text}"
+        )
+
 
 # Função para criar transferências
 def create_transfer(transfer_data, token):
@@ -71,11 +83,14 @@ def create_transfer(transfer_data, token):
     }
     response = requests.post(TRANSFER_FUNDS_URL, json=payload, headers=headers)
     if response.status_code == 201:
-        print(f"Transferência criada: {transfer_data['source_cpf']} -> {transfer_data['target_cpf']}")
+        print(
+            f"Transferência criada: {transfer_data['source_cpf']} -> {transfer_data['target_cpf']}"
+        )
         return response.json()  # Retorna os dados da transferência criada
     else:
-        print(f"Erro ao criar transferência: {response.status_code} - {response.text}")
+        print(f"transferência: {response.status_code} - {response.text}")
         return None
+
 
 # Função para atualizar a data da transferência
 def update_transfer_date(transfer_id, date, token):
@@ -90,7 +105,10 @@ def update_transfer_date(transfer_id, date, token):
     if response.status_code == 200:
         print(f"Data da transferência {transfer_id} atualizada para {date}")
     else:
-        print(f"Erro ao atualizar data da transferência {transfer_id}: {response.status_code} - {response.text}")
+        print(
+            f"Erro ao atualizar data da transferência {transfer_id}: {response.status_code} - {response.text}"
+        )
+
 
 # Função principal para processar o JSON
 def process_json(json_file):
@@ -112,7 +130,12 @@ def process_json(json_file):
         if item["model"] == "infrastructure.djangotransfer":
             # Obtém o token JWT para o usuário que está realizando a transferência
             source_cpf = item["fields"]["source_cpf"]
-            user_data = next(user for user in data if user["model"] == "infrastructure.customuser" and user["fields"]["cpf"] == source_cpf)
+            user_data = next(
+                user
+                for user in data
+                if user["model"] == "infrastructure.customuser"
+                and user["fields"]["cpf"] == source_cpf
+            )
             token = get_jwt_token(source_cpf, user_data["fields"]["password"])
 
             if token:
@@ -120,8 +143,11 @@ def process_json(json_file):
                 transfer_response = create_transfer(item["fields"], token)
                 if transfer_response:
                     # Atualiza a data da transferência
-                    transfer_id = transfer_response["id"]  # Supondo que o endpoint retorne o ID da transferência
+                    transfer_id = transfer_response[
+                        "id"
+                    ]  # Supondo que o endpoint retorne o ID da transferência
                     update_transfer_date(transfer_id, item["fields"]["date"], token)
+
 
 # Executar o script
 if __name__ == "__main__":
