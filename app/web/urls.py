@@ -18,13 +18,30 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
-from webapps.views import ListTransfersView, CreateUserView, AddBalanceToWalletView  # Adicione o AddBalanceToWalletView aqui
+from webapps.views import (
+    ListTransfersView,
+    CreateUserView,
+    AddBalanceToWalletView,
+    TransferFundsView,
+    WalletBalanceView,
+)
 
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("api/token/", TokenObtainPairView.as_view(), name="token_obtain_pair"),
-    path("api/users/", CreateUserView.as_view(), name="create_user"),  
+    # URL para criar usuario (POST)
+    path("api/users/", CreateUserView.as_view(), name="create_user"),
     path("api/token/refresh/", TokenRefreshView.as_view(), name="token_refresh"),
-    path("transfers/", ListTransfersView.as_view(), name="list_transfers"),
-    path("wallet/<str:cpf>/add_balance/", AddBalanceToWalletView.as_view(), name='add_balance_to_wallet'),  # Adicionando a URL para o endpoint de adicionar saldo
+    # URL para listagem de transferências (GET)
+    path("wallet/transfers/", ListTransfersView.as_view(), name="list_transfers"),
+    # URL para adicionar saldo na carteira (POST)
+    path(
+        "wallet/<str:cpf>/add_balance/",
+        AddBalanceToWalletView.as_view(),
+        name="add_balance_to_wallet",
+    ),
+    # URL para transferir fundos (POST)
+    path("wallet/transfer/", TransferFundsView.as_view(), name="transfer_funds"),
+    # URL para ver saldo (GET)
+    path("api/wallet/balance/", WalletBalanceView.as_view(), name="wallet_balance"),
 ]

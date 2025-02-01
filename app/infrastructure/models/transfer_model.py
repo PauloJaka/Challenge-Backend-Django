@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth import get_user_model
 
+
 class DjangoTransfer(models.Model):
     source_cpf = models.CharField(max_length=11)
     target_cpf = models.CharField(max_length=11)

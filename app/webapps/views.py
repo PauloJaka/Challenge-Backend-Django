@@ -1,25 +1,41 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
+from rest_framework import status
+from rest_framework.decorators import api_view
+from rest_framework.exceptions import NotFound
+from rest_framework.pagination import PageNumberPagination
+from django.http import JsonResponse
+from django.utils import timezone
+from datetime import datetime
+import logging
+
+
+# Use cases
 from application.use_cases.transfer_funds import TransferFundsUseCase
-from infrastructure.repositories.django_wallet_repository import DjangoWalletRepository
 from application.use_cases.list_transfers import ListTransfersUseCase
+from application.use_cases.create_user import CreateUserUseCase
+from application.use_cases.add_balance_to_wallet import AddBalanceToWalletUseCase
+from application.use_cases.get_wallet_balance import GetWalletBalanceUseCase
+
+
+# Repositories
+from infrastructure.repositories.django_wallet_repository import DjangoWalletRepository
 from infrastructure.repositories.django_transfer_repository import (
     DjangoTransferRepository,
 )
-from rest_framework import status
-from rest_framework.decorators import api_view
 from infrastructure.repositories.django_user_repository import DjangoUserRepository
-from application.use_cases.create_user import CreateUserUseCase
-from application.use_cases.add_balance_to_wallet import AddBalanceToWalletUseCase
 from infrastructure.repositories.django_wallet_repository import DjangoWalletRepository
-from django.http import JsonResponse
+
+
+# Domain
 from domain.exceptions.wallet_not_found_execption import WalletNotFoundException
-from rest_framework.exceptions import NotFound
 from infrastructure.models import CustomUser
 from domain.entities.user import User as DomainUser
-import logging
-from rest_framework.pagination import PageNumberPagination
+
+# Utilities
+from modules.utils.date_utils import parse_date
+
 
 logger = logging.getLogger(__name__)
 
@@ -78,6 +94,19 @@ class CreateUserView(APIView):
         }
 
 
+class WalletBalanceView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        try:
+            cpf = request.user.cpf  # CPF do usuário autenticado
+            use_case = GetWalletBalanceUseCase(DjangoWalletRepository())
+            balance = use_case.execute(cpf)
+            return Response({"balance": balance}, status=200)
+        except Exception as e:
+            return Response({"error": str(e)}, status=404)
+
+
 class TransferFundsView(APIView):
     permission_classes = [IsAuthenticated]
 
@@ -86,77 +115,82 @@ class TransferFundsView(APIView):
         target_cpf = request.data["target_cpf"]
         amount = float(request.data["amount"])
 
+        transfer_repository = DjangoTransferRepository()
+
         use_case = TransferFundsUseCase(
             wallet_repository=DjangoWalletRepository(),
+            transfer_repository=transfer_repository,
             notification_service=print("Transferencia inválida"),
         )
+
         use_case.execute(amount, source_cpf, target_cpf)
 
         return Response({"message": "Transferência realizada com sucesso."}, status=200)
 
+
 class ListTransfersView(APIView, PageNumberPagination):
     permission_classes = [IsAuthenticated]
-    page_size = 10  # Set a default page size
-    
+    page_size = 20
+
     def get(self, request):
         try:
             cpf = request.user.cpf
-            logging.debug(f"Processing request for user CPF: {cpf}")
-            
-            start_date = request.query_params.get("start_date")
-            end_date = request.query_params.get("end_date")
-            logging.debug(f"Date range: start={start_date}, end={end_date}")
-            
+            logger.debug(f"Processando requisição para CPF: {cpf}")
+
+            start_date_str = request.query_params.get("start_date")
+            end_date_str = request.query_params.get("end_date")
+
+            start_date = None
+            end_date = None
+
+            if start_date_str:
+                start_date = parse_date(start_date_str)
+                start_date = timezone.make_aware(start_date)
+
+            if end_date_str:
+                end_date = parse_date(end_date_str)
+                end_date = timezone.make_aware(end_date)
+
             use_case = ListTransfersUseCase(DjangoTransferRepository())
             transfers = use_case.execute(cpf, start_date, end_date)
-            logging.debug(f"Transfers returned from use_case: {[t.id for t in transfers] if transfers else 'None'}")
-            
+
             if not transfers:
-                logging.debug("No transfers found.")
-                return Response({'message': 'No transfers found'}, status=404)
-            
-            try:
-                results = self.paginate_queryset(transfers, request, view=self)
-                if results is None:
-                    logging.error("Pagination returned None results")
-                    return Response({'error': 'Error paginating results'}, status=500)
-                
-                logging.debug(f"Successfully paginated results: {len(results)} items")
-                
-                transfers_data = []
-                for transfer in results:
-                    try:
-                        transfer_dict = {
-                            "id": transfer.id,
-                            "source_cpf": transfer.source_cpf,
-                            "target_cpf": transfer.target_cpf,
-                            "amount": float(transfer.amount),
-                            "date": transfer.date.isoformat(),
-                        }
-                        transfers_data.append(transfer_dict)
-                    except Exception as e:
-                        logging.error(f"Error processing transfer {transfer.id}: {str(e)}")
-                        continue
-                
-                logging.debug(f"Processed {len(transfers_data)} transfers successfully")
+                return Response(status=status.HTTP_204_NO_CONTENT)
+
+            # Paginação e serialização
+            page = self.paginate_queryset(transfers, request)
+            if page is not None:
+                transfers_data = [
+                    {
+                        "id": transfer.id,
+                        "source_cpf": transfer.source_cpf,
+                        "target_cpf": transfer.target_cpf,
+                        "amount": float(transfer.amount),
+                        "date": transfer.date.isoformat(),
+                    }
+                    for transfer in page
+                ]
                 return self.get_paginated_response(transfers_data)
-                
-            except Exception as e:
-                logging.error(f"Error during pagination: {str(e)}")
-                return Response({'error': f'Error during pagination: {str(e)}'}, status=500)
-                
+
+            return Response(
+                {"message": "No transfers found"}, status=status.HTTP_204_NO_CONTENT
+            )
+
+        except ValueError as e:
+            logger.error(f"Erro de formato de data: {str(e)}")
+            return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
         except Exception as e:
-            logging.error(f"Unexpected error in ListTransfersView: {str(e)}")
-            return Response({'error': f'Internal server error: {str(e)}'}, status=500)
-
-
-
+            logger.error(f"Erro interno: {str(e)}", exc_info=True)
+            return Response(
+                {"error": "Erro interno no servidor"},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )
 
 
 class AddBalanceToWalletView(APIView):
     def post(self, request, cpf):
         try:
-            amount = float(request.POST.get("amount"))
+            amount = float(request.data.get("amount", 0))
             use_case = AddBalanceToWalletUseCase(DjangoWalletRepository())
             wallet = use_case.execute(cpf, amount)
             return JsonResponse({"balance": wallet.balance}, status=200)

@@ -25,14 +25,16 @@ class DjangoWalletRepository:
         django_wallet, _ = DjangoWallet.objects.update_or_create(
             cpf=django_user,
             defaults={
-                "balance": wallet._balance,  
+                "balance": wallet._balance,
                 "last_transaction_date": wallet.last_transaction_date,
             },
         )
         return CoreWallet(
-            id=django_wallet.pk,  
+            id=django_wallet.pk,
             cpf=django_user.cpf,
             balance=django_wallet.balance,
             created_at=timezone.localtime(django_wallet.created_at),
-            last_transaction_date=timezone.localtime(django_wallet.last_transaction_date),
+            last_transaction_date=timezone.localtime(
+                django_wallet.last_transaction_date
+            ),
         )

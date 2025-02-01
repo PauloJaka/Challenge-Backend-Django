@@ -1,5 +1,6 @@
 from django.utils import timezone
 
+
 class Transfer:
     def __init__(
         self,

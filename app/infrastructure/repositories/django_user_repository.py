@@ -22,15 +22,15 @@ class DjangoUserRepository:
             name=django_user.name,
             cpf=django_user.cpf,
             password=django_user.password,
-            created_at=timezone.localtime(django_user.created_at),  
+            created_at=timezone.localtime(django_user.created_at),
         )
-    
+
     def get_by_cpf(self, cpf: str) -> DomainUser:
         # Busca o usuário no banco de dados pelo CPF
         try:
             DjangoUser = get_user_model()
             django_user = DjangoUser.objects.get(cpf=cpf)
-            
+
             # Retorna o DomainUser
             return DomainUser(
                 id=django_user.id,
@@ -40,4 +40,4 @@ class DjangoUserRepository:
                 created_at=timezone.localtime(django_user.created_at),
             )
         except DjangoUser.DoesNotExist:
-            return None  
+            return None

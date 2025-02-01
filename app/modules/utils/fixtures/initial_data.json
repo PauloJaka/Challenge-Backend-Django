@@ -1,0 +1,103 @@
+[
+  {
+    "model": "infrastructure.customuser",
+    "pk": 1,
+    "fields": {
+      "name": "João Silva",
+      "cpf": "12345678901",
+      "password": "MeContrataPfv",
+      "is_active": true,  
+      "created_at": "2024-01-01T10:00:00Z"
+    }
+  },
+  {
+    "model": "infrastructure.customuser",
+    "pk": 2,
+    "fields": {
+      "name": "Maria Santos",
+      "cpf": "98765432101",
+      "password": "pbkdf2_sha256$260000$IuiGHz7Ow4Xp$JK3LpD9UgFUXHG2g+NzM5x8L6Y+AGQw6OL7VvV3Q3a0=",
+      "created_at": "2024-01-02T11:00:00Z"
+    }
+  },
+  {
+    "model": "infrastructure.customuser",
+    "pk": 3,
+    "fields": {
+      "name": "Pedro Oliveira",
+      "cpf": "45678912301",
+      "password": "pbkdf2_sha256$260000$IuiGHz7Ow4Xp$JK3LpD9UgFUXHG2g+NzM5x8L6Y+AGQw6OL7VvV3Q3a0=",
+      "created_at": "2024-01-03T12:00:00Z"
+    }
+  },
+  {
+    "model": "infrastructure.djangoWallet",
+    "pk": 1,
+    "fields": {
+      "cpf": "12345678901",
+      "balance": 5000.00,
+      "created_at": "2024-01-01T10:00:00Z",
+      "last_transaction_date": "2024-01-01T10:00:00Z"
+    }
+  },
+  {
+    "model": "infrastructure.djangoWallet",
+    "pk": 2,
+    "fields": {
+      "cpf": "98765432101",
+      "balance": 3500.00,
+      "created_at": "2024-01-02T11:00:00Z",
+      "last_transaction_date": "2024-01-02T11:00:00Z"
+    }
+  },
+  {
+    "model": "infrastructure.djangoWallet",
+    "pk": 3,
+    "fields": {
+      "cpf": "45678912301",
+      "balance": 7500.00,
+      "created_at": "2024-01-03T12:00:00Z",
+      "last_transaction_date": "2024-01-03T12:00:00Z"
+    }
+  },
+  {
+    "model": "infrastructure.djangotransfer",
+    "pk": 1,
+    "fields": {
+      "source_cpf": "12345678901",
+      "target_cpf": "98765432101",
+      "amount": 1000.00,
+      "date": "2024-01-15T14:30:00Z"
+    }
+  },
+  {
+    "model": "infrastructure.djangotransfer",
+    "pk": 2,
+    "fields": {
+      "source_cpf": "98765432101",
+      "target_cpf": "45678912301",
+      "amount": 500.00,
+      "date": "2024-01-20T16:45:00Z"
+    }
+  },
+  {
+    "model": "infrastructure.djangotransfer",
+    "pk": 3,
+    "fields": {
+      "source_cpf": "45678912301",
+      "target_cpf": "12345678901",
+      "amount": 750.00,
+      "date": "2024-01-25T09:15:00Z"
+    }
+  },
+  {
+    "model": "infrastructure.djangotransfer",
+    "pk": 4,
+    "fields": {
+      "source_cpf": "12345678901",
+      "target_cpf": "98765432101",
+      "amount": 1200.00,
+      "date": "2024-01-30T13:00:00Z"
+    }
+  }
+]

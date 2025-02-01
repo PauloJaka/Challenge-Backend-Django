@@ -24,7 +24,7 @@ class TestAuthenticationUseCase:
         )
 
     def test_successful_authentication(self):
-        
+
         self.repo_mock.find_by_cpf.return_value = self.test_user
 
         # Act
@@ -38,7 +38,7 @@ class TestAuthenticationUseCase:
         assert result.error is None
 
     def test_authentication_with_invalid_password(self):
-        
+
         self.repo_mock.find_by_cpf.return_value = self.test_user
 
         # Act
@@ -52,7 +52,7 @@ class TestAuthenticationUseCase:
         assert result.token is None
 
     def test_authentication_with_nonexistent_user(self):
-        
+
         self.repo_mock.find_by_cpf.return_value = None
 
         # Act
@@ -64,7 +64,7 @@ class TestAuthenticationUseCase:
         assert result.token is None
 
     def test_generated_token_contains_user_data(self):
-        
+
         self.repo_mock.find_by_cpf.return_value = self.test_user
 
         # Act

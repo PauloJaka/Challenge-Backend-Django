@@ -3,6 +3,7 @@ from datetime import datetime
 from application.use_cases.list_transfers import ListTransfersUseCase
 from domain.entities.transfer import Transfer
 
+
 def test_list_transfers_without_filters():
     transfer_repo = Mock()
     transfer_repo.get_transfers.return_value = [
@@ -21,6 +22,7 @@ def test_list_transfers_without_filters():
     assert len(transfers) == 1
     assert transfers[0].source_cpf == "12345678909"
     transfer_repo.get_transfers.assert_called_once_with("12345678909", None, None)
+
 
 def test_list_transfers_with_date_filters():
     transfer_repo = Mock()

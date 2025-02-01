@@ -5,6 +5,7 @@ from domain.entities.wallet import Wallet
 from django.utils import timezone
 import pytest
 
+
 def test_create_user_creates_wallet():
     user_repo_mock = Mock()
     wallet_repo_mock = Mock()
@@ -30,4 +31,4 @@ def test_create_user_creates_wallet():
 
     assert saved_wallet.cpf == cpf
     assert saved_wallet.balance == 0.0
-    assert isinstance(saved_wallet, Wallet)  
+    assert isinstance(saved_wallet, Wallet)

@@ -3,6 +3,7 @@ from datetime import datetime
 from typing import List
 from domain.entities.transfer import Transfer
 
+
 class TransferRepository(ABC):
     @abstractmethod
     def get_transfers(

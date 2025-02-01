@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
 from domain.entities.wallet import Wallet
 
+
 class WalletRepository(ABC):
     @abstractmethod
     def save(self, wallet: Wallet) -> Wallet:
